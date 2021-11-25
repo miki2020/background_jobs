@@ -21,18 +21,8 @@ class PagesController < ApplicationController
 
   # POST /pages or /pages.json
   def create
-    @page = Page.new(page_params)
-
-    respond_to do |format|
-      sleep 5
-      if @page.save
-        format.html { redirect_to @page, notice: "Page was successfully created." }
-        format.json { render :show, status: :created, location: @page }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @page.errors, status: :unprocessable_entity }
-      end
-    end
+    GeneratePageJob.perform_later(page_params)
+    redirect_to pages_path, notice: "Page was successfully created."
   end
 
   # PATCH/PUT /pages/1 or /pages/1.json
